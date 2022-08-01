@@ -1,0 +1,41 @@
+body {
+    background-color: #eee;
+}
+
+.cabecera,
+.contenido,
+.pie {
+    background-color:aliceblue;
+    border-bottom: solid;
+    border-color: lightgray;
+    border-width: 1px;
+    padding: 10px;
+}
+
+.container {
+    border-style: solid;
+    border-width: 1px;
+    border-top: none;
+    border-bottom: none;
+    border-radius: 4px;
+    border-color: lightgray;
+    margin: 5px;
+
+}
+
+.aceptar,
+.cancelar {
+
+    border: none;
+    cursor: pointer;
+    padding: 10px 8px;
+    width: 80px;
+    color: white;
+}
+
+.aceptar{
+    background-color: skyblue;
+}
+.cancelar{
+    background-color: darkgray;
+}
