@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from './user.js'
-import {expressjwt} from 'express-jwt'
+import { expressjwt } from 'express-jwt'
 
 mongoose.connect('mongodb+srv://brdekrom:LaClaveDeMongo123@cluster0.04c7q.mongodb.net/auth?retryWrites=true&w=majority')
 
@@ -11,8 +11,9 @@ const app = express()
 
 app.use(express.json())
 
-const validateJwt = expressjwt({ secret: 'mi-string-secreto', algorithms: ['HS256'] })
-const singToken = _id => jwt.sign({ _id }, 'mi-string-secreto')
+console.log()
+const validateJwt = expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+const singToken = _id => jwt.sign({ _id }, process.env.SECRET)
 
 app.post('/register', async (req, res) => {
     const { body } = req
@@ -55,9 +56,30 @@ app.post('/login', async (req, res) => {
     }
 })
 
-app.get('/lele', validateJwt, (req, res, next) => {
-    console.log('lala', req.user)
-    res.send('ok')
+const findAndAssignUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.auth._id)
+        if (!user) {
+            return res.status(401).end()
+        }
+        req.auth = user
+        next()
+    } catch (e) {
+        next(e)
+    }
+}
+
+const isAuthenticaded = express.Router().use(validateJwt, findAndAssignUser)
+app.get('/lele', isAuthenticaded, (req, res) => {
+    res.send(req.auth)
+})
+
+app.use((err,req,res,next) => {
+    console.log('Mi nuevo error es', err.stack)
+    next(err)
+})
+app.use((err,req,res,next) => {
+    res.sed('Ha ocurrido un error :(')
 })
 
 app.listen(3000, () => {
